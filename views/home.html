@@ -26,7 +26,7 @@
 
     <button onclick="table('moons')" class="btn btn-default"><span class="glyphicon glyphicon-flag" aria-hidden="true"></span> Moons</button>
     <button onclick="table('planets')" class="btn btn-primary"><span class="glyphicon glyphicon-globe" aria-hidden="true"></span> Planets</button>
-    <button onclick="table('small_solar_system_bodies')" class="btn btn-info"><span class="glyphicon glyphicon-send" aria-hidden="true"></span> Astroids / Commets</button>
+    <button onclick="table('small_solar_system_bodies')" class="btn btn-info"><span class="glyphicon glyphicon-send" aria-hidden="true"></span> Astroids / Comets</button>
     <button onclick="table('stars')" class="btn btn-warning"><span class="glyphicon glyphicon-star" aria-hidden="true"></span> Stars</button>
     <button onclick="table('solar_systems')" class="btn btn-success"><span class="glyphicon glyphicon-th" aria-hidden="true"></span> Solar Systems</button>
     <button onclick="table('galaxies')" class="btn btn-danger"><span class="glyphicon glyphicon-fullscreen" aria-hidden="true"></span> Galaxies</button>
@@ -42,6 +42,15 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
 
     <script type="text/javascript">
+
+    function getImages(url, node) {
+        $.getJSON( url, function(data) {
+            var img = document.createElement("IMG");
+            img.src = data
+            node.appendChild(img);
+        })
+    }
+
     function table(table) {
         var path = "http://localhost:4444/" + table;
         console.log(path);
@@ -57,12 +66,22 @@
             $.each(data, function() {
                 var tbl_row = "";
                 $.each(this, function(k , v) {
-                    tbl_row += "<td>"+v+"</td>";
+                    if (k == "url") {
+                        tbl_row += "<td class=url><a href=\"" + v + "\">" + v + "</a></td>";
+                    } else {
+                        tbl_row += "<td>"+v+"</td>";
+                    }
                 })
                 tbl_body += "<tr class=\""+( odd_even ? "odd" : "even")+"\">"+tbl_row+"</tr>";
                 odd_even = !odd_even;               
             })
             $("#results tbody").html(tbl_body);
+            /*
+            $(".url").each(function() {
+                $
+                getImages($(this).text(), $(this))
+            })
+            */
         });
     }
     </script>
