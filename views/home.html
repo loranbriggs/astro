@@ -19,6 +19,10 @@
         body {
             margin: 5%;
         }
+        .name {
+            cursor: pointer;
+            color: #337ab7;
+        }
     </style>
   </head>
   <body>
@@ -33,6 +37,12 @@
     <button onclick="table('blackholes')" class="btn"><span class="glyphicon glyphicon-magnet" aria-hidden="true"></span> Blackholes</button>
 
     <table id="results" class="table table-striped">
+        <tbody></tbody>
+    </table>
+
+    <h3 id="orbit-header" style="display:none;">Orbiting / Containing Bodies</h3>
+
+    <table id="details" class="table table-striped">
         <tbody></tbody>
     </table>
 
@@ -52,6 +62,8 @@
     }
 
     function table(table) {
+        $("#orbit-header").hide();
+        $("#details").hide();
         var path = "http://localhost:4444/" + table;
         console.log(path);
         $.getJSON( path, function(data) {
@@ -67,7 +79,11 @@
                 var tbl_row = "";
                 $.each(this, function(k , v) {
                     if (k == "url") {
-                        tbl_row += "<td class=url><a href=\"" + v + "\">" + v + "</a></td>";
+                        tbl_row += "<td class=\"url\"><a href=\"" + v + "\">" + v + "</a></td>";
+                    } else if (k == "name") {
+                        tbl_row += "<td class=\"name\">" + v + "</td>";
+                    } else if (k == "id") {
+                        tbl_row += "<td class=\"idcell\" databaseid=\"" + v + "\">" + v + "</td>";
                     } else {
                         tbl_row += "<td>"+v+"</td>";
                     }
@@ -76,13 +92,51 @@
                 odd_even = !odd_even;               
             })
             $("#results tbody").html(tbl_body);
-            /*
-            $(".url").each(function() {
-                $
-                getImages($(this).text(), $(this))
-            })
-            */
+            $("#results").attr("table", table);
+
+            addClickListener();
         });
+    }
+
+    function details(table, objectid) {
+        var path = "http://localhost:4444/" + table + "/" + objectid;
+        console.log(path);
+        $.getJSON( path, function(data) {
+            var tbl_body = "";
+            var firstRow = data[0];
+            var header_row = "";
+            $.each(firstRow, function(k,v) {
+                header_row += "<th>" + k + "</th>";
+            })
+            tbl_body += "<tr class=\"header\">" + header_row + "</tr>";
+            var odd_even = false;
+            $.each(data, function() {
+                var tbl_row = "";
+                $.each(this, function(k , v) {
+                    if (k == "url") {
+                        tbl_row += "<td class=\"url\"><a href=\"" + v + "\">" + v + "</a></td>";
+                    } else {
+                        tbl_row += "<td>"+v+"</td>";
+                    }
+                })
+                tbl_body += "<tr class=\""+( odd_even ? "odd" : "even")+"\">"+tbl_row+"</tr>";
+                odd_even = !odd_even;               
+            })
+            $("#details tbody").html(tbl_body);
+            $("#details").attr("table", table);
+
+        });
+    }
+
+    function addClickListener() {
+        $(".name").click(function() {
+            $("#orbit-header").show();
+            $("#details").show();
+            var table = $("#results").attr("table");
+            var objectid = $(this).parent().children(".idcell").attr("databaseid");
+            console.log(table + "," + objectid)
+            details(table, objectid);
+        })
     }
     </script>
   </body>
