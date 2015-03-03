@@ -79,6 +79,6 @@ func main() {
   r.HandleFunc("/{table}", querydb)
   r.HandleFunc("/{table}/{id}", queryind)
   http.Handle("/", r)
-  fmt.Println("listing at 4444....")
+  fmt.Println("listing at http://localhost:4444/")
   http.ListenAndServe(":4444", nil)
 }
