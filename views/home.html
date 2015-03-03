@@ -1,27 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Astro DB</title>
 
-<head>
-    <meta charset="utf-8" />
-    <title>Home</title>
-    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
-</head>
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
 
-<body>
-    <header>
-        <h1>Astronomical Database</h1>
-    </header>
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <style>
+        body {
+            margin: 5%;
+        }
+    </style>
+  </head>
+  <body>
+    <h1>Astronomical Bodies</h1>
 
-    <nav>
-    </nav>
+    <button onclick="table('moons')" class="btn btn-default"><span class="glyphicon glyphicon-flag" aria-hidden="true"></span> Moons</button>
+    <button onclick="table('planets')" class="btn btn-primary"><span class="glyphicon glyphicon-globe" aria-hidden="true"></span> Planets</button>
+    <button onclick="table('small_solar_system_bodies')" class="btn btn-info"><span class="glyphicon glyphicon-send" aria-hidden="true"></span> Astroids / Commets</button>
+    <button onclick="table('stars')" class="btn btn-warning"><span class="glyphicon glyphicon-star" aria-hidden="true"></span> Stars</button>
+    <button onclick="table('solar_systems')" class="btn btn-success"><span class="glyphicon glyphicon-th" aria-hidden="true"></span> Solar Systems</button>
+    <button onclick="table('galaxies')" class="btn btn-danger"><span class="glyphicon glyphicon-fullscreen" aria-hidden="true"></span> Galaxies</button>
+    <button onclick="table('blackholes')" class="btn"><span class="glyphicon glyphicon-magnet" aria-hidden="true"></span> Blackholes</button>
 
-    <section>
-        <p>Welcome</p>
-    </section>
+    <table id="results" class="table table-striped">
+        <tbody></tbody>
+    </table>
 
-    <footer>
-    </footer>
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-    <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
-</body>
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+
+    <script type="text/javascript">
+    function table(table) {
+        var path = "http://localhost:4444/" + table;
+        console.log(path);
+        $.getJSON( path, function(data) {
+            var tbl_body = "";
+            var firstRow = data[0];
+            var header_row = "";
+            $.each(firstRow, function(k,v) {
+                header_row += "<th>" + k + "</th>";
+            })
+            tbl_body += "<tr class=\"header\">" + header_row + "</tr>";
+            var odd_even = false;
+            $.each(data, function() {
+                var tbl_row = "";
+                $.each(this, function(k , v) {
+                    tbl_row += "<td>"+v+"</td>";
+                })
+                tbl_body += "<tr class=\""+( odd_even ? "odd" : "even")+"\">"+tbl_row+"</tr>";
+                odd_even = !odd_even;               
+            })
+            $("#results tbody").html(tbl_body);
+        });
+    }
+    </script>
+  </body>
 </html>
